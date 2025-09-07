@@ -55,15 +55,7 @@ export class UsersService {
         
   }
 
-  async findUserWithPasswordAndEmail(data:{email:string,password:string}):Promise<User>{
-      const {email,password}=data
-        const result = await this.usersRepository.createQueryBuilder("user")
-            .where("user.email = :email", { email })
-            .andWhere("user.password = :password", { password })
-            .getOne()
-        if(!result){
-            throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
-        }
-        return result;
-    }
+  async findOne(username: string): Promise<User | undefined> {
+    return this.usersRepository.findOneBy({name:username});
+  }
 }
