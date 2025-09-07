@@ -15,7 +15,7 @@ export class CategoryService {
 
   async create(createCategoryDto: CreateCategoryDto):Promise<Category>{
 
-        const result =  await this.categoryRepository.save(createCategoryDto);
+        const result =  await this.categoryRepository.save({...createCategoryDto,"slug":createCategoryDto.name.toLowerCase().replace(/ /g,'-').replace(/[^\w-]+/g,'')});
 
         return result;
 
