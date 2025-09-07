@@ -38,7 +38,7 @@ export class CategoryService {
             .getOne();
 
         if(!result){
-            throw new HttpException('Category not found', HttpStatus.BAD_REQUEST);
+            throw new Error('Category not found');
         }
 
         return result as Category;
