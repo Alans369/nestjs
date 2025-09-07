@@ -34,8 +34,7 @@ import { LoggerMiddleware } from './logger/logger.middleware';
     AuthModule,
     JwtModule.register({
       global: true,
-      secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: process.env.JWT_EXPIRATION },
+      secret: process.env.JWT_SECRET
     })
   ]
 })

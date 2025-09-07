@@ -15,7 +15,7 @@ export class UsersController {
   @Roles(['admin'])
   @UseGuards(RolesGuard)
   @UsePipes(new ValidationPipe())
-  create(@Body() createUserDto: CreateUserDto) {
+   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
   
