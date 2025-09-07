@@ -60,8 +60,14 @@ export class CategoryService {
   }
 
   async delete(id: number) {
-       const user = await this.categoryRepository.findOneBy({id:id});
-        if(!user){
+       const category = await this.categoryRepository.createQueryBuilder("Categories")
+            .where("Categories.id = :id",{id:id})
+           // .andWhere("Categories.estado = :estado",{estado:true})
+            .getOne();
+
+            console.log(category)
+
+        if(!category){
             throw new HttpException('Category not found', HttpStatus.BAD_REQUEST);
         }
         const rs = await this.categoryRepository.createQueryBuilder()
