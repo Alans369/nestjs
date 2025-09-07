@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -19,19 +19,51 @@ export class UsersService {
     return await this.usersRepository.save(newUser);
   }
 
-  findAll() {
-    return  this.usersRepository.find();
+  async findAll():Promise<User[]>{
+    return await this.usersRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findById(id: number) {
+    const result = await this.usersRepository.findOneBy({id:id});
+        if(!result){
+             throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+              }
+        return result;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto):Promise<User>{
+    const user = await this.usersRepository.findOneBy({id:id});
+        if(!user){
+             throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+        }
+        await this.usersRepository.merge(user,updateUserDto)
+
+        const result = await this.usersRepository.save(user);
+
+        return result;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async delete(id: number){
+    const user = await this.usersRepository.findOneBy({id:id});
+        if(!user){
+            throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+        }
+      
+        const rs = await this.usersRepository.delete(id);
+        if (rs.affected!==undefined && rs.affected!>0){throw new HttpException('User usessfuly', HttpStatus.OK)}
+
+        
   }
+
+  async findUserWithPasswordAndEmail(data:{email:string,password:string}):Promise<User>{
+      const {email,password}=data
+        const result = await this.usersRepository.createQueryBuilder("user")
+            .where("user.email = :email", { email })
+            .andWhere("user.password = :password", { password })
+            .getOne()
+        if(!result){
+            throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+        }
+        return result;
+    }
 }
