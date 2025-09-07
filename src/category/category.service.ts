@@ -11,8 +11,6 @@ export class CategoryService {
       @InjectRepository(Category)
       private categoryRepository: Repository<Category>,
     ) {}
-
-
   async create(createCategoryDto: CreateCategoryDto):Promise<Category>{
 
         const result =  await this.categoryRepository.save({...createCategoryDto,"slug":createCategoryDto.name.toLowerCase().replace(/ /g,'-').replace(/[^\w-]+/g,'')});
@@ -52,7 +50,7 @@ export class CategoryService {
         if(!categoria){
              throw new HttpException('Category not found', HttpStatus.BAD_REQUEST);
         }
-         await this.categoryRepository.merge(categoria,updateCategoryDto);
+         await this.categoryRepository.merge(categoria,{...updateCategoryDto,"slug":updateCategoryDto.name.toLowerCase().replace(/ /g,'-').replace(/[^\w-]+/g,'')});
 
          const result = await this.categoryRepository.save(categoria);
 
@@ -62,11 +60,8 @@ export class CategoryService {
   async delete(id: number) {
        const category = await this.categoryRepository.createQueryBuilder("Categories")
             .where("Categories.id = :id",{id:id})
-           // .andWhere("Categories.estado = :estado",{estado:true})
+           . andWhere("Categories.estado = :estado",{estado:true})
             .getOne();
-
-            console.log(category)
-
         if(!category){
             throw new HttpException('Category not found', HttpStatus.BAD_REQUEST);
         }
