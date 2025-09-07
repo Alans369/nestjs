@@ -57,9 +57,9 @@ export class ProductsController {
   @Delete(':id')
   async remove(@Param('id',ParseIntPipe) id:number) {
     try {
-      if(await this.productsService.remove(+id)){throw new HttpException('borrado correctamete',HttpStatus.OK)}
+      await this.productsService.remove(+id)
 
-      return {"status":500,"messages":"internal Eroor"}
+      return {"status":200,"messages":"borrado corectamente"}
       
     } catch (error) {
        throw new HttpException(
