@@ -64,12 +64,20 @@ export class ProductsService {
 }
 
   async update(id: number, updateProductDto: UpdateProductDto) :Promise<Product>{
-    const product =  await this.productRepository.findOneBy({id:id});
+    try {
+      const product =  await this.productRepository.findOneBy({id:id});
 
-    if(!product){
-        throw new Error("Product not found");
-    }
-    const updateData: any = { ...updateProductDto };
+      if(!product){
+          throw new Error("Product not found");
+      }
+
+      const categoria= await this.categoryService.finById(updateProductDto.categoryId)
+
+
+     const updateData: any = { ...updateProductDto };
+
+     updateData.category=categoria
+
     
     // Generate new slug if name is being updated
     if (updateProductDto.title) {
@@ -84,6 +92,13 @@ export class ProductsService {
      const result = await this.productRepository.save(product);
 
     return result;
+      
+    } catch (error) {
+      throw new Error(error.message)
+      
+    }
+
+    
 }
 
   async remove(id: number):Promise<boolean> {
