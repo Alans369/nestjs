@@ -17,7 +17,7 @@ export class AuthService {
     if (user?.password !== pass) {
       throw new Error('credneciales invalidas');
     }
-    const payload = { sub: user.id, username: user.name };
+    const payload = { sub: user.id, username: user.name,role:user.role};
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
